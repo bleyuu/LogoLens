@@ -43,23 +43,8 @@ if (isset($_SESSION['user_id'])) {
         <a href="change_password.php" class="btn">Change Password</a>
         <a href="logout.php" class="btn">Logout</a>
     <?php else: ?>
-        <h3>Login</h3>
-        <form action="auth.php" method="POST">
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Password" required />
-            <button type="submit" name="login" class="btn">Login</button>
-        </form>
-        <h3>Or Register</h3>
-        <form action="auth.php" method="POST">
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Password" required />
-            <button type="submit" name="register" class="btn">Register</button>
-        </form>
-        <h3>OAuth Login (Placeholder)</h3>
-        <p>
-            <a href="#" onclick="alert('OAuth login not implemented in demo.'); return false;" class="btn">Login with Google</a>
-            <a href="#" onclick="alert('OAuth login not implemented in demo.'); return false;" class="btn">Login with Facebook</a>
-        </p>
+        <a href="login.php" class="btn">Login</a>
+        <a href="register.php" class="btn">Register</a>
     <?php endif; ?>
 </div>
 </body>

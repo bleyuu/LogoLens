@@ -10,6 +10,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = $_POST['email'];
         $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
         $secret = generate_totp_secret();
+
+        // Check if email already exists
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE email=?");
+        $stmt->execute([$email]);
+        if ($stmt->fetch()) {
+            header('Location: register.php?error=' . urlencode('Email already exists.'));
+            exit;
+        }
+
         $stmt = $pdo->prepare("INSERT INTO users (email, password, totp_secret) VALUES (?, ?, ?)");
         $stmt->execute([$email, $password, $secret]);
         $_SESSION['user_id'] = $pdo->lastInsertId();
@@ -28,7 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: 2fa.php');
             exit;
         }
-        $error = "Invalid login.";
+        header('Location: login.php?error=' . urlencode('Invalid login.'));
+        exit;
     }
 
     // 2FA verification
@@ -51,3 +61,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+<?php if (isset($error)): ?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>2FA Verification - Error</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <h3>Enter 2FA Code</h3>
+    <div class="error"><?= htmlspecialchars($error) ?></div>
+    <form action="auth.php" method="POST">
+        <input type="text" name="code" placeholder="6-digit code" required>
+        <button type="submit" name="verify_2fa" class="btn">Verify</button>
+    </form>
+    <p>Open Google Authenticator and enter the code for your account.</p>
+</div>
+</body>
+</html>
+<?php endif; ?>
